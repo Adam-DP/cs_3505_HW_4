@@ -82,7 +82,14 @@ int main(int argc, char* argv[])
 	}
       else if(word.compare("Warehouse")==0)
 	{
-		string location = tokens[2];
+		int count = 2;
+	  	string location = tokens[count];
+	  	count++;
+	  	while(count < tokens.size())
+	    {
+	      location.append(" " + tokens[count]);
+	      count++;
+	    }
 	  cout << "New warehouse in " << location << endl;
 	}
       else if(word.compare("Start")==0)
@@ -118,14 +125,28 @@ int main(int argc, char* argv[])
 	{
 		string UPC = tokens[1];
 		string days = tokens[2];
-		string warehouse = tokens[3];
+		int count = 3;
+	  	string warehouse = tokens[count];
+	  	count++;
+	  	while(count < tokens.size())
+	    {
+	      warehouse.append(" " + tokens[count]);
+	      count++;
+	    }
 		cout << "Receive " << UPC <<  " " << days << " " << warehouse <<  endl;
 	}
 	else if(word.compare("Request:")==0)
 	{
 		string UPC = tokens[1];
 		string days = tokens[2];
-		string warehouse = tokens[3];
+		int count = 3;
+	  	string warehouse = tokens[count];
+	  	count++;
+	  	while(count < tokens.size())
+	    {
+	      warehouse.append(" " + tokens[count]);
+	      count++;
+	    }
 		cout << "Request " << UPC << " " << days <<  " " << warehouse <<  endl;
 	}
 else if (word.compare("Next") ==0)
@@ -148,4 +169,3 @@ else if (word.compare("Next") ==0)
 
   return 0;
 }
-
