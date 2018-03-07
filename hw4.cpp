@@ -12,13 +12,13 @@
 #include <stdio.h>
 #include <sstream>
 #include <vector>
+#include "model.h"
+#include <set>
 
 
 using namespace std;
+//using namespace cs3505;
 
-// Note:  Our classes were declared in a cs3505 namepsace.
-//        Instead of 'using namespace cs3505', I qualify the class names 
-//        below with cs3505::
 
 int main(int argc, char* argv[])
 {
@@ -40,15 +40,16 @@ int main(int argc, char* argv[])
   if(!in) 
     cout << "There was an issue opening the file" << endl; 
 
-  // Loop for reading the file.  Note that it is controlled
-  //   from within the loop (see the 'break').
+
   string next_line;
 
+// Initialize the Model
+	cs3505::model m;
+
+
+// Parse the Header information Line By Line
   while (getline(in, next_line))
     {
-      // Read a word (don't worry about punctuation)
-
-
       // USED STACK OVERFLOW CODE TO LEARN HOW TO PARSE WHITESPACE STRING TO A VECTOR
       //https://stackoverflow.com/questions/236129/the-most-elegant-way-to-iterate-the-words-of-a-string
       stringstream ss(next_line);
@@ -77,8 +78,8 @@ int main(int argc, char* argv[])
 	      count++;
 	    }
 		
-	  cout << "New Food Item " << UPC << " " << life << " " << name << " " << endl; 
-	  	
+	  //cout << "New Food Item " << UPC << " " << life << " " << name << " " << endl; 
+	  	m.add_food_type(UPC, life, name);	
 	}
       else if(word.compare("Warehouse")==0)
 	{
@@ -90,22 +91,22 @@ int main(int argc, char* argv[])
 	      location.append(" " + tokens[count]);
 	      count++;
 	    }
-	  cout << "New warehouse in " << location << endl;
+	  //cout << "New warehouse in " << location << endl;
+		m.add_warehouse(location);
 	}
       else if(word.compare("Start")==0)
 	{
 	  // Move on to commands
+      m.set_start_date(tokens[2]);
 	  cout << "START WORKING " << endl;
 	  break;
 	}
 
     }
 	  
+// LOOP THROUGH THE REQUESTS LINE BY LINE
   while (getline(in, next_line))
     {
-      // Read a word (don't worry about punctuation)
-
-
       // USED STACK OVERFLOW CODE TO LEARN HOW TO PARSE WHITESPACE STRING TO A VECTOR
       //https://stackoverflow.com/questions/236129/the-most-elegant-way-to-iterate-the-words-of-a-string
       stringstream ss(next_line);
@@ -114,10 +115,7 @@ int main(int argc, char* argv[])
       while (ss >> buf)
 	tokens.push_back(buf);
 	  
-      string word = tokens[0];
-
-      //cout << next_line << endl; 
-
+      string word = tokens[0]; // Get the first word to decide what will be done
       if (in.fail())	break;
 
 
@@ -169,3 +167,4 @@ else if (word.compare("Next") ==0)
 
   return 0;
 }
+
