@@ -27,9 +27,9 @@ namespace cs3505
 
 		while(inventory.at(UPC)->size() > 0 && req_q > 0)
 		{
-			std::cout<< "ENTERED LOOP" << std::endl;
-			batch b = inventory.at(UPC)->front(); // gets the first batch
-			
+			//std::cout<< "ENTERED LOOP" << std::endl;
+			batch & b = inventory.at(UPC)->front(); // gets the first batch
+			// TODO THIS WAS CHANGED
 			if(b.quantity > req_q)
 			{
 				b.quantity = b.quantity - req_q;
@@ -58,23 +58,33 @@ namespace cs3505
 		//std::cout << "Inventory size: " << inventory.size() << " warehouse name: " << name << std::endl;
 	}
 
-/*
-	void warehouse::update_inventory(boost::gregorian::date current_date, std::vector<std::string> * UPC_list)
+
+	void warehouse::update_inventory(boost::gregorian::date current_date, std::vector<std::string> & UPC_list) //TODO  changed
 	{
-		for(int idx = 0; idx < UPC_list->size(); idx++)
+		
+		for(int idx = 0; idx < UPC_list.size(); idx++) // TODO changed
 		{
-			batch b = inventory.at(UPC_list[idx])->front();
-			
-			while((b.expirationi_date - current_date) == 0)
+			//std::cout << "Updating inventory for: " << name << std::endl;
+			if(inventory.at(UPC_list.at(idx))->size() != 0) // Prevents accessing the front element of an empty queue
 			{
-				inventory.at(UPC_list[idx])->pop();
-				std::cout << "Batch expired: " << b.item_name << std::endl;
-				b = inventory.at(*UPC_list[idx])->front();
+				batch b = inventory.at(UPC_list.at(idx))->front(); // TODO changed
+				std::cout << "This batch is: " << b.item_name << "in: " << name << " with left: " << b.quantity << std::endl << std::endl;
+				while((b.expiration_date - current_date) == boost::gregorian::days(0)) //TODO  changed
+				{
+					inventory.at(UPC_list.at(idx))->pop();
+					std::cout << "Batch expired: " << b.item_name << " " << name << std::endl;
+
+					// If there is something left in the inventory queue, then grab it,
+					// otherwise, there is nothing left to remove, so we break.
+					if(inventory.at(UPC_list.at(idx))->size() != 0)
+						b = inventory.at(UPC_list[idx])->front(); //TODO  changed
+					else break;
 				
+				}
 			}
 
 		}
 	}
-*/
+
 
 }

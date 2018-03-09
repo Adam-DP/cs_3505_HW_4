@@ -72,8 +72,7 @@ namespace cs3505
 		// Tell each warehouse to remove expired items
 		for(int idx = 0; idx < warehouse_names.size(); idx++)
 		{
-			std::vector<std::string> * ptr = & UPC_list;
-			//warehouses.at(warehouse_names[idx]).update_inventory(current_date, ptr);
+			warehouses.at(warehouse_names[idx]).update_inventory(current_date, UPC_list); // changed
 		}
 	}
 
@@ -92,7 +91,7 @@ namespace cs3505
 			requested_order ro = request_queue.front();
 			request_queue.pop();
 
-			std::cout << "UPC #" << idx << ": " << ro.UPC << std::endl;
+			//std::cout << "UPC #" << idx << ": " << ro.UPC << std::endl;
 
 			/* Create a bool for if the request was filled, access the warehouse from 
 			 * the requested_order struct, fulfill the request using the UPC and 	
@@ -154,7 +153,7 @@ namespace cs3505
 		warehouses.insert(std::pair<std::string, warehouse>(name, location) );
 		warehouse_names.push_back(name); // Add name of warehouse to list of all warehouse names
 		
-		std::cout << "inserted " << warehouses.at(name).getName() << std::endl;
+		//std::cout << "inserted " << warehouses.at(name).getName() << std::endl;
  
 	}
 
@@ -162,7 +161,7 @@ namespace cs3505
 	{
 		//std::cout << "New Food Item " << UPC << " " << life << " " << name << " " << std::endl; 
 		food_items.insert(std::pair<std::string, std::string>(UPC, name) );
-		std::cout << "inserted UPC for " << food_items.at(UPC) << std::endl;
+		//std::cout << "inserted UPC for " << food_items.at(UPC) << std::endl;
 		
 		// Convert Lifespan to an Integer - store it in the map
 		item_life.insert(std::pair<std::string, int>(UPC, atoi(life.c_str())) );
@@ -178,7 +177,7 @@ namespace cs3505
 		
 		// We used the link on the discussion for reference for this part
 		current_date = boost::gregorian::date_from_iso_string(year+month+day);
-		std::cout << current_date << std::endl;  // Just for debugging
+		//std::cout << current_date << std::endl;  // Just for debugging
 				
 	}
 
