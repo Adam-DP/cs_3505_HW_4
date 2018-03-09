@@ -50,19 +50,20 @@ namespace cs3505
 			/* Maps for storage of item names, item shelf life, and item popularity */
 			std::map<std::string, std::string> food_items; // Maps UPC to item Name
 
-			std::map<std::string, boost::gregorian::date> item_exp; // Maps UPC to Item Expiration Date
 
 			std::map<std::string, int> item_life; // Maps UPC to Item Life (in days)
 
-			std::map<std::string, int> item_popularity; // Maps
+			std::map<std::string, long long> item_popularity; // Maps
 
 			// Date variable: holds the current date of the model
 			boost::gregorian::date current_date;
 
+			
+
 			/* Queue used to keep track of all the requests done in the current day.
 			 * Utilizes the batch struct, however the "Experiation Date" field is irrelevant for this stack
 			 */
-			std::queue<batch> request_queue;  
+			std::queue<requested_order> request_queue;  
 
 		public:
 
@@ -70,12 +71,12 @@ namespace cs3505
 			model();
 
 			/* A function that adds the requested item to the receive queue */
-			void request_item(std::string UPC, int quantity, warehouse location);
+			void add_request(std::string UPC, std::string quantity, std::string location);
 
 			/* A function that is for each item in the receive queue, creates a batch and updates the warehouses
 			 * inventory based off their requests from the current day
 			 */
-			void receive_item(batch b, warehouse location);
+			void receive_item(std::string UPC, std::string quantity, std::string warehouse_name);
 
 			/* Processes all the requests from the current day, calls the warehouses to 
 			 * update their inventory (remove expired items) and then advances to the next day
@@ -86,6 +87,10 @@ namespace cs3505
 			 * and if not enough updates the underfilled string 
 			 */
 			 void process_requests(); 
+
+			/* Print out the Statistics */
+			void print_statistics();
+			
 
 			/* Returns the date of the current day*/
 			boost::gregorian::date get_date();

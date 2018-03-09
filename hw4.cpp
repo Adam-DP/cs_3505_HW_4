@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
       if(word.compare("Receive:")==0)
 	{
 		string UPC = tokens[1];
-		string days = tokens[2];
+		string quant = tokens[2];
 		int count = 3;
 	  	string warehouse = tokens[count];
 	  	count++;
@@ -131,12 +131,14 @@ int main(int argc, char* argv[])
 	      warehouse.append(" " + tokens[count]);
 	      count++;
 	    }
-		cout << "Receive " << UPC <<  " " << days << " " << warehouse <<  endl;
+
+		m.receive_item(UPC, quant, warehouse);
+		cout << "Receive " << UPC <<  " " << quant << " " << warehouse <<  endl;
 	}
 	else if(word.compare("Request:")==0)
 	{
 		string UPC = tokens[1];
-		string days = tokens[2];
+		string quant = tokens[2];
 		int count = 3;
 	  	string warehouse = tokens[count];
 	  	count++;
@@ -145,14 +147,22 @@ int main(int argc, char* argv[])
 	      warehouse.append(" " + tokens[count]);
 	      count++;
 	    }
-		cout << "Request " << UPC << " " << days <<  " " << warehouse <<  endl;
+
+		m.add_request(UPC, quant, warehouse);
+		
+		cout << "Request " << UPC << " " << quant <<  " " << warehouse <<  endl;
 	}
 else if (word.compare("Next") ==0)
-{
-	cout << "RUN NEXT DAY CALCULATIONS" << endl; 
+{	
+	// Finish the receives and requests for the day and increments the day
+	m.conclude_day(); 
 }
 	else if (word.compare("End") ==0)
 {
+	// finish the receives and requests for the day
+	// print statistics
+	m.process_requests();
+	m.print_statistics();
 	cout << "THE END" << endl; 
 }
 	

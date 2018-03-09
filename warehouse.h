@@ -5,7 +5,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <map>
 #include <queue>          // std::queue
-#include <vector>
+//#include <vector>
 
 
 namespace cs3505
@@ -25,22 +25,21 @@ namespace cs3505
 	{
 	private:
 		std::string name;
-		std::map<std::string, std::vector<batch> > inventory; // A map of UCP to Lists of Inventory
+		std::map<std::string, std::queue<batch> * > inventory; // A map of UCP to Lists of Inventory
 
 
 	public:
 		warehouse(const std::string & s);
 		void remove_expired();
 		void add_to_inventory(batch b);
-		void fulfill_requests();
+		bool fulfill_requests(std::string UPC, long long req_q);
 		std::string getName();
+		void initialize_UPC(std::string UPC);
+		void update_inventory(boost::gregorian::date current_date,  std::vector<std::string> * UPC_list);
+		
 
 	};
 }
-
-
-
-
 
 
 
