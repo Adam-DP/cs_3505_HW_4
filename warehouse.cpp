@@ -86,5 +86,10 @@ namespace cs3505
 		}
 	}
 
+	// There is an item in the inventory, return true. 
+	bool warehouse::is_stocked(std::string UPC)
+	{
+		return inventory.at(UPC)->size() > 0;
+	}
 
 }

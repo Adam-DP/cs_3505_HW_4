@@ -11,7 +11,27 @@
 
 namespace cs3505
 {
+	struct upc_popularity
+	{
+		std::string UPC;
+		std::string item_name;	
+		long long popularity;
 
+		bool operator<(const upc_popularity & rhs) const
+		{		
+			// We want it in reverse order to be able to pull from the back of the vector (the max value)
+			if(this->popularity < rhs.popularity)
+			{
+				return true;
+			}
+			else if(this->popularity == rhs.popularity)
+			{
+				if(this->UPC < rhs.UPC)
+					return true;
+			}
+			return false;
+		}	
+	};
 
 	struct requested_order
 	{
@@ -26,6 +46,18 @@ namespace cs3505
 		boost::gregorian::date expiration_date;
 		std::string UPC;
 		std::string item_name;	
+
+		bool operator<(const underfilled_order & rhs) const
+		{	
+			long long lhsq = atoll((this->UPC).c_str());
+			long long rhsq = atoll((rhs.UPC).c_str());
+
+			if(lhsq > rhsq) // This is intentionally backwards, we want it in reverse order
+			{
+				return true;
+			}
+			return false;
+		}	
 	
 	};
 
@@ -37,9 +69,14 @@ namespace cs3505
 			/* String to keep track of all the orders that are underfilled.
 			 * This variable will be added to in the form of "date UPC itemname" 
 			 * The end contains a std::endl character */
-			std::string underfilled_orders; 
+			std::vector<underfilled_order> underfilled_orders; 
+
+			/* This will on a daily basis hod the underfilled orders for that 
+			 * day before they are added to the overall underfilled orders. */
+			std::vector<underfilled_order> temp_underfilled;
 
 			std::vector<std::string> warehouse_names;
+
 
 			// Map of warehouses for the system, 
 			std::map<std::string, warehouse> warehouses; 
@@ -95,8 +132,6 @@ namespace cs3505
 			/* Returns the date of the current day*/
 			boost::gregorian::date get_date();
 
-			/* Returns the underfilled string */
-			std::string get_underfilled();
 
 			/* Calculates the well stocked warehouses by checking to see if at least two warehouses contain
 			 * an item. If this is the case, this function will print out that item in the form of 
@@ -115,6 +150,12 @@ namespace cs3505
 			/* Sets the start date */
 			void set_start_date(const std::string & date);
 
+			/* Function taken from stack overflow to help convert to a usable 
+			 *string. https://stackoverflow.com/questions/7162457/how-to-convert-boostgregoriandate-to-mm-dd-yyyy-format-and-vice-versa */
+			std::string dateAsMMDDYYYY( const boost::gregorian::date & date );
+			
+			/* Helper function to override the comparator for sorting UPC 
+			bool myfunction (std::string lhs,std::string rhs); */
 	};
 
 }

@@ -3,19 +3,32 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <map>
 #include <queue>  
-#include "model.h"   
+#include "model.h"  
+#include <algorithm> 
 
      
 
 
 namespace cs3505
 {
+
+	bool myfunction (std::string lhs,std::string rhs) 
+	{ 
+		long long lhsq = atoll((lhs).c_str());
+		long long rhsq = atoll((rhs).c_str());
+
+		if(lhsq < rhsq) // This is intentionally backwards, we want it in reverse order
+		{
+			return true;
+		}
+		return false;
+	}
 	/* Class functions */
 
 	/* Constructs the model */
 	model::model()
 	{
-		// TODO does this need initializers? 
+
 	}
 
 	/* A function that adds the requested item to the receive queue */
@@ -57,22 +70,17 @@ namespace cs3505
 	 */
 	void model::conclude_day()
 	{
-	// END OF DAY 
-
-		
-	//std::cout << "size of queue: " << request_queue.size() << std::endl;
-		
+	// END OF DAY 	
 	
 		model::process_requests();
 
 		// Increment the current day
 		current_date = current_date + boost::gregorian::days(1);
-		std::cout << "current date: " << current_date << std::endl;
 		
 		// Tell each warehouse to remove expired items
 		for(int idx = 0; idx < warehouse_names.size(); idx++)
 		{
-			warehouses.at(warehouse_names[idx]).update_inventory(current_date, UPC_list); // changed
+			warehouses.at(warehouse_names[idx]).update_inventory(current_date, UPC_list); 
 		}
 	}
 
@@ -81,27 +89,40 @@ namespace cs3505
 	 */
 	 void model::process_requests()
 	 {
-
-			
-			std::cout << "END OF DAY" << std::endl;
-		//std::cout << "size of queue: " << request_queue.size() << std::endl;
 		int original_size = request_queue.size();
 		for(int idx = 0; idx < original_size; idx++)
 		{
 			requested_order ro = request_queue.front();
 			request_queue.pop();
 
-			//std::cout << "UPC #" << idx << ": " << ro.UPC << std::endl;
-
 			/* Create a bool for if the request was filled, access the warehouse from 
 			 * the requested_order struct, fulfill the request using the UPC and 	
 			 * quantity from the struct */
 			bool did_fulfil = ro.location.fulfill_requests(ro.UPC, ro.quantity);
 
-			if(did_fulfil)
-				std::cout << "Request for " << ro.UPC << " fulfilled" << std::endl;
-			else
-				std::cout << "Request for " << ro.UPC << " not fulfilled" << std::endl;
+			if(!did_fulfil)
+			{
+				underfilled_order under = {current_date, ro.UPC, ro.item_name};
+				temp_underfilled.push_back(under);
+			}
+
+		}
+
+		// UPDATE ALL THE UNDERFILLED REQUESTS
+		// Sort todays underfilled orders by UPC
+		std::sort (temp_underfilled.begin(), temp_underfilled.end());
+		int temp_size = temp_underfilled.size();
+		// Add the today's underfilled orders to the overall underfilled orders list
+
+		std::string previous = "";
+		for(int i = temp_underfilled.size()-1; i>=0; i--)
+		{
+			underfilled_order u = temp_underfilled[i];
+			if(previous.compare(u.UPC) != 0)
+				underfilled_orders.push_back(temp_underfilled[i]);
+			
+			previous = u.UPC;
+			temp_underfilled.pop_back();
 
 		}
 
@@ -115,11 +136,6 @@ namespace cs3505
 		return current_date;
 	}
 
-	/* Returns the underfilled string */
-	std::string model::get_underfilled()
-	{
-		return "";
-	}
 
 	/* Calculates the well stocked warehouses by checking to see if at least two warehouses contain
 	 * an item. If this is the case, this function will print out that item in the form of 
@@ -153,7 +169,6 @@ namespace cs3505
 		warehouses.insert(std::pair<std::string, warehouse>(name, location) );
 		warehouse_names.push_back(name); // Add name of warehouse to list of all warehouse names
 		
-		//std::cout << "inserted " << warehouses.at(name).getName() << std::endl;
  
 	}
 
@@ -183,13 +198,84 @@ namespace cs3505
 
 	void model::print_statistics()
 	{
-		std::cout << "PRINT STATISTICS" << std::endl;
+
+		std::cout << "Underfilled orders:" << std::endl; 
+		for(int idx = 0; idx < underfilled_orders.size(); idx++)
+		{
+			underfilled_order & order = underfilled_orders[idx];
+			boost::gregorian::date d = order.expiration_date;
+
+			
+			// Format the date correctly 
+			std::string date_string = model::dateAsMMDDYYYY(d);
+		
+			std::cout << date_string << " " << order.UPC << " " << order.item_name << "\n";
+			
+		}
+		std::cout << std::endl;
+
+		std::cout << "Well-Stocked Products:" << std::endl;
+		// calculate well stocked products
+		std::sort (UPC_list.begin(), UPC_list.end(), myfunction);
+		
+		for(int outer_idx = 0; outer_idx < UPC_list.size(); outer_idx++)
+		{
+			int count = 0;
+			for(int inner_idx = 0; inner_idx < warehouse_names.size(); inner_idx++)
+			{
+				if(warehouses.at(warehouse_names[inner_idx]).is_stocked(UPC_list[outer_idx]))
+				{
+					count++;
+					if(count == 2)
+					{
+						std::cout << UPC_list[outer_idx] << " " << food_items[UPC_list[outer_idx]] << std::endl;
+						break;
+					}
+				}
+
+			}
+		}
+		std::cout << std::endl;
+
+		std::cout << "Most Popular Products:" << std::endl;
+		
+
+		std::vector<upc_popularity> pop_vec;
+		
+		// Populate list of UPC Pop structures
 		for(int idx = 0; idx < UPC_list.size(); idx++)
 		{
 			std::string name = food_items.at(UPC_list[idx]);
-			std::cout << name << "'s popularity is: " << item_popularity.at(UPC_list[idx]) << std::endl;
+			long long popularity = item_popularity.at(UPC_list[idx]);
+			upc_popularity next_val = {UPC_list[idx], name, popularity};
+			pop_vec.push_back(next_val);
+
+			//std::cout << name << "'s popularity is: " << item_popularity.at(UPC_list[idx]) << std::endl;
+		}
+		// Sort list by Value
+		std::sort (pop_vec.begin(), pop_vec.end());
+		// Pull Top 3
+		int count = 0;
+		while(count < 3 && count < pop_vec.size())
+		{
+			upc_popularity current = pop_vec[pop_vec.size()-(1+count++)];
+			std::cout << current.popularity << " " << current.UPC << " " << current.item_name << std::endl;
 		}
 
+
+	}
+
+
+	// We found this off of stack over flow. This creates a string based off the date 
+	// https://stackoverflow.com/questions/7162457/how-to-convert-boostgregoriandate-to-mm-dd-yyyy-format-and-vice-versa
+	const std::locale fmt(std::locale::classic(),
+		                  new boost::gregorian::date_facet("%m/%d/%Y"));
+	std::string model::dateAsMMDDYYYY( const boost::gregorian::date & date )
+	{
+		std::ostringstream os;
+		os.imbue(fmt);
+		os << date;
+		return os.str();
 	}
 
 	

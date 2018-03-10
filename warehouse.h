@@ -35,7 +35,8 @@ namespace cs3505
 		bool fulfill_requests(std::string UPC, long long req_q);
 		std::string getName();
 		void initialize_UPC(std::string UPC);
-		void update_inventory(boost::gregorian::date current_date,  std::vector<std::string> & UPC_list); // changed
+		void update_inventory(boost::gregorian::date current_date,  std::vector<std::string> & UPC_list);
+		bool is_stocked(std::string UPC);
 		
 
 	};
