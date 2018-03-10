@@ -129,18 +129,11 @@ namespace cs3505
 			void print_statistics();
 			
 
-			/* Returns the date of the current day*/
-			boost::gregorian::date get_date();
-
-
 			/* Calculates the well stocked warehouses by checking to see if at least two warehouses contain
 			 * an item. If this is the case, this function will print out that item in the form of 
 			 * "UPC, itemname"
 			 */
 			void calc_well_stocked();
-
-			/* Adds a food item to the food_items map */
-			void add_item(std::string UPC, std::string item_name);
 
 			/* Adds a warehouse to the set of warehouses */
 			void add_warehouse(const std::string & name);
@@ -154,8 +147,7 @@ namespace cs3505
 			 *string. https://stackoverflow.com/questions/7162457/how-to-convert-boostgregoriandate-to-mm-dd-yyyy-format-and-vice-versa */
 			std::string dateAsMMDDYYYY( const boost::gregorian::date & date );
 			
-			/* Helper function to override the comparator for sorting UPC 
-			bool myfunction (std::string lhs,std::string rhs); */
+			
 	};
 
 }

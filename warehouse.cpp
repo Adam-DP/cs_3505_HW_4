@@ -1,3 +1,4 @@
+/* Warehouse file containing class functions for a warehouse. By Adam Della-Piana and Parker Stewart */
 
 #include "warehouse.h"
 namespace cs3505
@@ -8,28 +9,28 @@ namespace cs3505
 	
 	}
 
-	void warehouse::remove_expired(){}
-
+	// Adds the batch to the inventory map
 	void warehouse::add_to_inventory(batch b)
 	{
 		// Get the UPC from the batch
 		std::string id = b.UPC;
 		// Add the batch to the inventory queue at the UPC 
 		inventory.at(id)->push(b);
-		// std::cout<<  "Warehouse" << name << "Added to Inventory at Address: " << inventory.at(id) << std::endl;
-		//std::cout << "top batch: " << inventory.at(id).front().item_name << std::endl;
 	}
 
+	/* Function that fulfills the requests for the given UPC. 
+	 * The parameters are the UPC and the quantity for that UPC
+	 * and this function removes the corresponding batches until the 
+	 * quantity is met, or the inventory runs out */
 	bool warehouse::fulfill_requests(std::string UPC, long long req_q)
 	{
 		bool fulfilled = false;
-	// std::cout<< "Warehouse" << name << "Pulled from Inventory at Address: " << inventory.at(UPC) << std::endl;
 
 		while(inventory.at(UPC)->size() > 0 && req_q > 0)
 		{
-			//std::cout<< "ENTERED LOOP" << std::endl;
+			
 			batch & b = inventory.at(UPC)->front(); // gets the first batch
-			// TODO THIS WAS CHANGED
+			
 			if(b.quantity > req_q)
 			{
 				b.quantity = b.quantity - req_q;
@@ -48,36 +49,36 @@ namespace cs3505
 		return fulfilled;
 	}
 
-	std::string warehouse::getName(){return name;}
-
+	/* Initialize's the UPC'queue for the inventorie of each food item in
+	 * the warehouse */
 	void warehouse::initialize_UPC(std::string UPC)
 	{
 		std::queue<batch> *vec = new std::queue<batch>();
 		inventory.insert(std::pair<std::string, std::queue<batch> *>(UPC, vec));
-
-		//std::cout << "Inventory size: " << inventory.size() << " warehouse name: " << name << std::endl;
 	}
 
 
-	void warehouse::update_inventory(boost::gregorian::date current_date, std::vector<std::string> & UPC_list) //TODO  changed
+	/* This function removes the expired items from the warehouse's 
+	 * inventory. The UPC_list is passed by reference, to prevent copying
+	 * the whole data structure. */ 
+	void warehouse::update_inventory(boost::gregorian::date current_date, std::vector<std::string> & UPC_list)
 	{
-		
-		for(int idx = 0; idx < UPC_list.size(); idx++) // TODO changed
+		// for each upc (food item) 
+		for(int idx = 0; idx < UPC_list.size(); idx++) 
 		{
-			//std::cout << "Updating inventory for: " << name << std::endl;
 			if(inventory.at(UPC_list.at(idx))->size() != 0) // Prevents accessing the front element of an empty queue
 			{
-				batch b = inventory.at(UPC_list.at(idx))->front(); // TODO changed
-				std::cout << "This batch is: " << b.item_name << "in: " << name << " with left: " << b.quantity << std::endl << std::endl;
-				while((b.expiration_date - current_date) == boost::gregorian::days(0)) //TODO  changed
+				batch b = inventory.at(UPC_list.at(idx))->front(); 
+
+				// Remove the batch if it is expired
+				while((b.expiration_date - current_date) == boost::gregorian::days(0)) 
 				{
 					inventory.at(UPC_list.at(idx))->pop();
-					std::cout << "Batch expired: " << b.item_name << " " << name << std::endl;
-
+			
 					// If there is something left in the inventory queue, then grab it,
 					// otherwise, there is nothing left to remove, so we break.
 					if(inventory.at(UPC_list.at(idx))->size() != 0)
-						b = inventory.at(UPC_list[idx])->front(); //TODO  changed
+						b = inventory.at(UPC_list[idx])->front(); 
 					else break;
 				
 				}
@@ -86,7 +87,7 @@ namespace cs3505
 		}
 	}
 
-	// There is an item in the inventory, return true. 
+	// Returns true if there is a batch in the inventory for this UPC
 	bool warehouse::is_stocked(std::string UPC)
 	{
 		return inventory.at(UPC)->size() > 0;

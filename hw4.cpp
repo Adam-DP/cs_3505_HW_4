@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 	  
       string word = tokens[0];
 
-      //cout << next_line << endl; 
+
 
       if (in.fail())	break;
 
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
 	      count++;
 	    }
 		
-	  //cout << "New Food Item " << UPC << " " << life << " " << name << " " << endl; 
+
 	  	m.add_food_type(UPC, life, name);	
 	}
       else if(word.compare("Warehouse")==0)
@@ -91,14 +91,14 @@ int main(int argc, char* argv[])
 	      location.append(" " + tokens[count]);
 	      count++;
 	    }
-	  //cout << "New warehouse in " << location << endl;
+
 		m.add_warehouse(location);
 	}
       else if(word.compare("Start")==0)
 	{
 	  // Move on to commands
       m.set_start_date(tokens[2]);
-	  cout << "START WORKING " << endl;
+	 
 	  break;
 	}
 
@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
 	    }
 
 		m.receive_item(UPC, quant, warehouse);
-		cout << "Receive " << UPC <<  " " << quant << " " << warehouse <<  endl;
+
 	}
 	else if(word.compare("Request:")==0)
 	{
@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
 
 		m.add_request(UPC, quant, warehouse);
 		
-		cout << "Request " << UPC << " " << quant <<  " " << warehouse <<  endl;
+
 	}
 else if (word.compare("Next") ==0)
 {	
@@ -163,7 +163,7 @@ else if (word.compare("Next") ==0)
 	// print statistics
 	m.process_requests();
 	m.print_statistics();
-	cout << "THE END" << endl; 
+
 }
 	
 

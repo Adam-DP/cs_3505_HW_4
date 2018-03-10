@@ -12,6 +12,8 @@
 namespace cs3505
 {
 
+	/* Helper function to override the comparator for sorting UPC 
+		bool myfunction (std::string lhs,std::string rhs); */
 	bool myfunction (std::string lhs,std::string rhs) 
 	{ 
 		long long lhsq = atoll((lhs).c_str());
@@ -23,7 +25,8 @@ namespace cs3505
 		}
 		return false;
 	}
-	/* Class functions */
+
+/* Class functions */
 
 	/* Constructs the model */
 	model::model()
@@ -126,15 +129,7 @@ namespace cs3505
 
 		}
 
-		
-
 	 }
-
-	/* Returns the date of the current day*/
-	boost::gregorian::date model::get_date()
-	{
-		return current_date;
-	}
 
 
 	/* Calculates the well stocked warehouses by checking to see if at least two warehouses contain
@@ -142,12 +137,6 @@ namespace cs3505
 	 * "UPC, itemname"
 	 */
 	void model::calc_well_stocked()
-	{
-
-	}
-
-	/* Adds a food item to the food_items map */
-	void model::add_item(std::string UPC, std::string item_name)
 	{
 
 	}
@@ -174,9 +163,7 @@ namespace cs3505
 
 	void model::add_food_type(const std::string & UPC, const std::string & life, const std::string & name)
 	{
-		//std::cout << "New Food Item " << UPC << " " << life << " " << name << " " << std::endl; 
 		food_items.insert(std::pair<std::string, std::string>(UPC, name) );
-		//std::cout << "inserted UPC for " << food_items.at(UPC) << std::endl;
 		
 		// Convert Lifespan to an Integer - store it in the map
 		item_life.insert(std::pair<std::string, int>(UPC, atoi(life.c_str())) );
@@ -184,6 +171,7 @@ namespace cs3505
 		
 	}
 
+	/* Sets the start date */
 	void model::set_start_date(const std::string & d1)
 	{
 		std::string month = d1.substr(0,2);
@@ -192,12 +180,13 @@ namespace cs3505
 		
 		// We used the link on the discussion for reference for this part
 		current_date = boost::gregorian::date_from_iso_string(year+month+day);
-		//std::cout << current_date << std::endl;  // Just for debugging
 				
 	}
 
 	void model::print_statistics()
 	{
+		std::cout << "Report by Adam Della-Piana and Parker Stewart" << std::endl;
+		std::cout << std::endl;
 
 		std::cout << "Underfilled orders:" << std::endl; 
 		for(int idx = 0; idx < underfilled_orders.size(); idx++)
@@ -250,7 +239,6 @@ namespace cs3505
 			upc_popularity next_val = {UPC_list[idx], name, popularity};
 			pop_vec.push_back(next_val);
 
-			//std::cout << name << "'s popularity is: " << item_popularity.at(UPC_list[idx]) << std::endl;
 		}
 		// Sort list by Value
 		std::sort (pop_vec.begin(), pop_vec.end());
