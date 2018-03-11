@@ -11,6 +11,9 @@
 
 namespace cs3505
 {
+
+	/* Used for storing and then sorting the popularity of UPC's 
+	 * Comparator sorts by popularity but uses UPC as a tiebreaker*/
 	struct upc_popularity
 	{
 		std::string UPC;
@@ -33,6 +36,7 @@ namespace cs3505
 		}	
 	};
 
+	/* This struct is used whenever we have an order requested */ 
 	struct requested_order
 	{
 		std::string item_name;
@@ -41,6 +45,8 @@ namespace cs3505
 		warehouse location;
 	};
 
+	/* This struct is used whenever we fail to fulfill an order
+	 * the comparator lets us sort these by UPC */ 
 	 struct underfilled_order
 	{
 		boost::gregorian::date expiration_date;
@@ -61,6 +67,11 @@ namespace cs3505
 	
 	};
 
+
+	/*
+	 * Class is initilaized in hw4 and used to abstract the work away from the parsing code
+	 * the hw4.cpp will update this each time it parses a command
+	 */
 	class model
 	{
 		friend class warehouse;   // This allows functions in warehouse to access
@@ -75,22 +86,25 @@ namespace cs3505
 			 * day before they are added to the overall underfilled orders. */
 			std::vector<underfilled_order> temp_underfilled;
 
+			/* Necessary because we want to have a list of every warehouse. 
+			 * lets us iterate through our warehouses map
+			 */
 			std::vector<std::string> warehouse_names;
-
 
 			// Map of warehouses for the system, 
 			std::map<std::string, warehouse> warehouses; 
 
-			// All UPC's
+			// All UPC's : used to help us iterate through our maps
 			std::vector<std::string> UPC_list;
 
 			/* Maps for storage of item names, item shelf life, and item popularity */
 			std::map<std::string, std::string> food_items; // Maps UPC to item Name
 
-
-			std::map<std::string, int> item_life; // Maps UPC to Item Life (in days)
-
-			std::map<std::string, long long> item_popularity; // Maps
+			// Maps UPC to Item Life (in days)
+			std::map<std::string, int> item_life; 
+		
+			// Maps a UPC to the item's popularity
+			std::map<std::string, long long> item_popularity; 
 
 			// Date variable: holds the current date of the model
 			boost::gregorian::date current_date;
@@ -128,16 +142,10 @@ namespace cs3505
 			/* Print out the Statistics */
 			void print_statistics();
 			
-
-			/* Calculates the well stocked warehouses by checking to see if at least two warehouses contain
-			 * an item. If this is the case, this function will print out that item in the form of 
-			 * "UPC, itemname"
-			 */
-			void calc_well_stocked();
-
 			/* Adds a warehouse to the set of warehouses */
 			void add_warehouse(const std::string & name);
 
+			/* Lets us populate the "database" of our maps so we can lookup expiration date and name based on UPC*/
 			void add_food_type(const std::string & UPC, const std::string & life, const std::string & name);
 
 			/* Sets the start date */

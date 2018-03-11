@@ -6,7 +6,8 @@
 #include "model.h"  
 #include <algorithm> 
 
-     
+/* Adam Della-Piana and Parker Stewart. Class functions for the model class
+ * CS 3505 Spring 2018 */
 
 
 namespace cs3505
@@ -131,16 +132,6 @@ namespace cs3505
 
 	 }
 
-
-	/* Calculates the well stocked warehouses by checking to see if at least two warehouses contain
-	 * an item. If this is the case, this function will print out that item in the form of 
-	 * "UPC, itemname"
-	 */
-	void model::calc_well_stocked()
-	{
-
-	}
-
 	/* Adds a warehouse to the set of warehouses */
 	void model::add_warehouse(const std::string & name)
 	{
@@ -150,17 +141,24 @@ namespace cs3505
 		for(int idx = 0; idx < UPC_list.size(); idx++)
 		{
 			location.initialize_UPC(UPC_list[idx]);
+			//Initialize the popularity stack
 			item_popularity.insert(std::pair<std::string, long long>(UPC_list[idx], 0));
 		}
-		//Initialize the popularity stack
-		
 
-		warehouses.insert(std::pair<std::string, warehouse>(name, location) );
-		warehouse_names.push_back(name); // Add name of warehouse to list of all warehouse names
+		// Check to see if the key already exists in the map, if it does not, then add the warehouse
+		// The map data structure should do this already, but for some reason it is not...
+		std::map<std::string,warehouse>::iterator it;
+		it = warehouses.find(name);
+		if(it == warehouses.end())
+		{
+			warehouses.insert(std::pair<std::string, warehouse>(name, location) );
+			warehouse_names.push_back(name); // Add name of warehouse to list of all warehouse names
+		}
 		
  
 	}
 
+	/* Lets us populate the "database" of our maps so we can lookup expiration date and name based on UPC*/
 	void model::add_food_type(const std::string & UPC, const std::string & life, const std::string & name)
 	{
 		food_items.insert(std::pair<std::string, std::string>(UPC, name) );
@@ -183,6 +181,7 @@ namespace cs3505
 				
 	}
 
+	/* Print the Underfilled orders, Well stocked products, and top 3 item popularity to the console */
 	void model::print_statistics()
 	{
 		std::cout << "Report by Adam Della-Piana and Parker Stewart" << std::endl;

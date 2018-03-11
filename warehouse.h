@@ -4,7 +4,7 @@
 #include <string>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <map>
-#include <queue>          // std::queue
+#include <queue>         
 
 /*Warehouse header file declaring the warehouse class. By Parker Stewart and Adam Della-Piana */
 

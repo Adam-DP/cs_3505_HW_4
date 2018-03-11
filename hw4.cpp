@@ -1,9 +1,8 @@
-
-
 /*
  * This method will parse input from the console to run our warehouse 
  *
- * 
+ * Adam Della-Piana and Parker Stewart 
+ * CS 3505 - Spring 2018
  */
 
 #include <iostream>
@@ -17,7 +16,7 @@
 
 
 using namespace std;
-//using namespace cs3505;
+
 
 
 int main(int argc, char* argv[])
@@ -64,7 +63,8 @@ int main(int argc, char* argv[])
 
       if (in.fail())	break;
 
-
+	// tokens contains a vector of each of the values that we want
+	// Based off of the first word, get the right information
       if(word.compare("FoodItem")==0)
 	{
 		string UPC = tokens[4];
@@ -106,8 +106,10 @@ int main(int argc, char* argv[])
 	  
 // LOOP THROUGH THE REQUESTS LINE BY LINE
   while (getline(in, next_line))
-    {
-      // USED STACK OVERFLOW CODE TO LEARN HOW TO PARSE WHITESPACE STRING TO A VECTOR
+    {	
+		
+      // PARSE WHITESPACE STRING TO A VECTOR
+	  // (adopted code from stack overflow)
       //https://stackoverflow.com/questions/236129/the-most-elegant-way-to-iterate-the-words-of-a-string
       stringstream ss(next_line);
       string buf;
@@ -119,6 +121,8 @@ int main(int argc, char* argv[])
       if (in.fail())	break;
 
 
+	// tokens contains a vector of each of the values that we want
+	// Based off of the first word, get the right information and call the right method
       if(word.compare("Receive:")==0)
 	{
 		string UPC = tokens[1];
@@ -152,22 +156,20 @@ int main(int argc, char* argv[])
 		
 
 	}
-else if (word.compare("Next") ==0)
-{	
-	// Finish the receives and requests for the day and increments the day
-	m.conclude_day(); 
-}
+	else if (word.compare("Next") ==0)
+	{	
+		// Finish the receives and requests for the day and increments the day
+		m.conclude_day(); 
+	}
 	else if (word.compare("End") ==0)
-{
-	// finish the receives and requests for the day
-	// print statistics
-	m.process_requests();
-	m.print_statistics();
+	{
+		// finish the receives and requests for the day
+		// print statistics
+		m.process_requests();
+		m.print_statistics();
 
-}
+	}
 	
-
-
     }
 
 
